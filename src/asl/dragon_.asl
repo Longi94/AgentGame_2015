@@ -27,23 +27,39 @@ init.
 ////////////////////////////////////////////////////////////////////////////////
 
 //Go to the nearest starting point of the loop
-+time(_): init & mypos(X,Y) & mydir(D) & X = 0 & Y = 0 & not D = 2 <-
++time(_): init & mypos(X,Y) & mydir(D) & X = 0 & Y = 0 <-
 	+target_low(10, 10);
-	turn(2).
+	if (D = 2) {
+		!move(2);
+	} else {
+		turn(2);
+	}.
 	
-+time(_): init & mypos(X,Y) & mydir(D) & X = 59 & Y = 0 & not D = 2 <-
++time(_): init & mypos(X,Y) & mydir(D) & X = 59 & Y = 0 <-
 	+target_low(49, 10);
 	+lap;
-	turn(2).
+	if (D = 2) {
+		!move(2);
+	} else {
+		turn(2);
+	}.
 	
-+time(_): init & mypos(X,Y) & mydir(D) & X = 0 & Y = 59 & not D = 1 <-
++time(_): init & mypos(X,Y) & mydir(D) & X = 0 & Y = 59 <-
 	+target_low(10, 49);
-	turn(1).
+	if (D = 1) {
+		!move(1);
+	} else {
+		turn(1);
+	}.
 	
-+time(_): init & mypos(X,Y) & mydir(D) & X = 59 & Y = 59 & not D = 3 <-
++time(_): init & mypos(X,Y) & mydir(D) & X = 59 & Y = 59 <-
 	+target_low(49, 49);
 	+lap;
-	turn(3).
+	if (D = 3) {
+		!move(3);
+	} else {
+		turn(3);
+	}.
 	
 //Start looping when reaching the nearest point of the loop
 +time(_): init & mypos(X,Y) & X = 10 & Y = 10 <-
@@ -100,7 +116,7 @@ init.
 	-target(_,_);
 	!move(Dir).
 	
-+time(_): target_low(X,Y) & mypos(X,Y) & mydir(Dir) <-
++time(_): target_low(X,Y) & mypos(X,Y) & mydir(Dir) & not target(Fx, Fx) <-
 	-target_low(_,_);
 	!move(Dir).
 	
@@ -164,7 +180,42 @@ init.
 // plans above would fit it, thus here we are sure that we had no plans earlier.
 +time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) <-
 	+target(Fx,Fy);
-	+target_low(X, Y);
+	/*if (D = 0) {
+		if (Fy < 10) {
+			+target_low(X, 10);
+		} else {
+			+target_low(X, Fy);
+		}
+	}
+	if (D = 2) {
+		if (Fy > 49) {
+			+target_low(X, 49);
+		} else {
+			+target_low(X, Fy);
+		}
+	}
+	if (D = 1) {
+		if (Fx > 49) {
+			+target_low(49, Y);
+		} else {
+			if (Fx > 30){
+				+target_low(30, Y);
+			} else {
+				+target_low(Fx, Y);
+			}
+		}
+	}
+	if (D = 3) {
+		if (Fx < 10) {
+			+target_low(10, Y);
+		} else {
+			if (Fx < 30){
+				+target_low(30, Y);
+			} else {
+				+target_low(Fx, Y);
+			}
+		}
+	}*/
 	!move(D).
 	
 	
