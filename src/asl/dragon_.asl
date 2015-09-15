@@ -1,34 +1,8 @@
-/*******************************************************************************
-	
-	AgentGame v1.0.
-	Copyright Peter Eredics (BUTE-DMIS) 2010-2011.
-	
-	simple.asl - Simple agent running for the closest food it sees 
-	
-*******************************************************************************/
-
 ////////////////////////////////////////////////////////////////////////////////
 //  INIT 
 ////////////////////////////////////////////////////////////////////////////////
 
-// No initial beliefs yet
-started.
-
-+time(_): started & mypos(X,Y) & X = 0 & Y = 0 & mydir(D)<-
-	+target(9, 9);
-	!move(2).
-	
-+time(_): started & mypos(X,Y) & X = 59 & Y = 0 & mydir(D) <-
-	+target(50, 9);
-	!move(0).
-	
-+time(_): started & mypos(X,Y) & X = 0 & Y = 59 & mydir(D) <-
-	+target(9, 50);
-	!move(2).
-	
-+time(_): started & mypos(X,Y) & X = 59 & Y = 59 & mydir(D) <-
-	+target(50, 50);
-	!move(0).
+init.
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Being out of energy
@@ -45,35 +19,63 @@ started.
 -!eat_at_my_pos <- 
 	true.
 
-+!eat_at_my_pos <- eat.
-
-
++!eat_at_my_pos <- 
+	eat.
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Moving
 ////////////////////////////////////////////////////////////////////////////////
 
-// First we define what a random turn is, and how to make it:
-+!randomTurn <-
-	.random(R);
-	turn(R*4).
-
-// If a random turn was scheduled before, execute it!
-/*+time(_) : scheduled_random_turn <-
-	-scheduled_random_turn;
-	!randomTurn.*/
+//Go to the nearest starting point of the loop
++time(_): init & mypos(X,Y) & mydir(D) & X = 0 & Y = 0 & not D = 2 <-
+	+target_low(10, 10);
+	turn(2).
+	
++time(_): init & mypos(X,Y) & mydir(D) & X = 59 & Y = 0 & not D = 2 <-
+	+target_low(49, 10);
+	+lap;
+	turn(2).
+	
++time(_): init & mypos(X,Y) & mydir(D) & X = 0 & Y = 59 & not D = 1 <-
+	+target_low(10, 49);
+	turn(1).
+	
++time(_): init & mypos(X,Y) & mydir(D) & X = 59 & Y = 59 & not D = 3 <-
+	+target_low(49, 49);
+	+lap;
+	turn(3).
+	
+//Start looping when reaching the nearest point of the loop
++time(_): init & mypos(X,Y) & X = 10 & Y = 10 <-
+	-target_low(_,_);
+	-init;
+	!move(2).
+	
++time(_): init & mypos(X,Y) & X = 49 & Y = 10 <-
+	-target_low(_,_);
+	-init;
+	!move(2).
+	
++time(_): init & mypos(X,Y) & X = 10 & Y = 49 <-
+	-target_low(_,_);
+	-init;
+	!move(1).
+	
++time(_): init & mypos(X,Y) & X = 49 & Y = 49 <-
+	-target_low(_,_);
+	-init;
+	!move(3).
 
 // If we are unable to move (our last position is the same as our position now),
 // forget the target and schedule a random turn to avoid geting stucked together 
 // with an agent moving from the opposite direction
-/*-!move(_) <-
+-!move(_) <-
 	-target(_,_);
-	+scheduled_random_turn.*/
+	+scheduled_random_turn.
 
 // If we are not stucked, we just have to keep moving
 +!move(Dir)  <-
 	step(Dir).
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Time triggered "intelligence" of the agent
@@ -87,15 +89,19 @@ started.
 //    - the food objects (=lists) are ordered by their first element (=distance)
 //    - the  "[0,..." means that the distance of the closest food is zero
 // If yes, let's eat it and forget about it as a target! 
-/*+time(_): food(Food) & .min(Food,[0,V,X,Y]) <-
++time(_): food(Food) & .min(Food,[0,V,X,Y]) <-
 	-target(_,_);
-	!eat_at_my_pos.*/
+	!eat_at_my_pos.
 	
 // If we get at the target cell, but there is no food there anymore (because if 
 // there would be a food, the plan above would have been executed) let's sadly  
 // forget about our target.
 +time(_): target(X,Y) & mypos(X,Y) & mydir(Dir) <-
 	-target(_,_);
+	!move(Dir).
+	
++time(_): target_low(X,Y) & mypos(X,Y) & mydir(Dir) <-
+	-target_low(_,_);
 	!move(Dir).
 	
 // If we have a target different from our current position, let's move towards 
@@ -112,13 +118,54 @@ started.
     
 +time(_): target(Fx,Fy) & mypos(Mx,My) & Fy<My <-
 	!move(0).
+	
+//Lower priority target
++time(_): target_low(Fx,Fy) & mypos(Mx,My) & Fx>Mx <-
+	!move(1).
+	
++time(_): target_low(Fx,Fy) & mypos(Mx,My) & Fx<Mx <-
+	!move(3).
+	
++time(_): target_low(Fx,Fy) & mypos(Mx,My) & Fy>My <-
+	!move(2).	
+    
++time(_): target_low(Fx,Fy) & mypos(Mx,My) & Fy<My <-
+	!move(0).
+	
+//Turn when reaching these special points of the loop
++time(_): mypos(X,Y) & mydir(D) & X = 10 & Y = 10 & D = 3 <-
+	turn(2).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 49 & Y = 10 & D = 1 <-
+	turn(2).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 10 & Y = 49 & D = 2 <-
+	turn(1).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 49 & Y = 49 & D = 2 <-
+	turn(3).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 30 & Y = 10 & D = 0 & lap<-
+	-lap;
+	turn(3).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 30 & Y = 10 & D = 0 <-
+	+lap;
+	turn(1).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 30 & Y = 49 & D = 1 <-
+	turn(0).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 30 & Y = 49 & D = 3 <-
+	turn(0).
 
 // If we see some food and we had no target before, we select the closest 
 // food and move towards it. (Note: if we would have a target, one of the 
 // plans above would fit it, thus here we are sure that we had no plans earlier.
-/*+time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) <-
++time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) <-
 	+target(Fx,Fy);
-	!move(D).*/
+	+target_low(X, Y);
+	!move(D).
 	
 	
 	
@@ -128,10 +175,6 @@ started.
 	
 // The rules bellow are executed only, if the agent has no target and it can't 
 // see any food right now.
-
-// With a 5% probability we turn into a random direction
-/*+time(_): .random(P) & P>0.95 <-
-	!randomTurn.*/
 
 // Otherwise we should just move forward...
 +time(_): mypos(X,Y) & mydir(0) & Y>0<-
@@ -151,4 +194,4 @@ started.
 	turn(D+2).
 
 +time(_): mydir(D) & D >= 2 <-
-	turn(D-2).	
+	turn(D-2).
