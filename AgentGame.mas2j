@@ -1,0 +1,25 @@
+/*******************************************************************************
+	
+	AgentGame 12.00
+	Copyright Peter Eredics (BUTE-DMIS) 2010-2012.
+	
+	AgentGame.mas2j - multi-agent system definition file
+	
+*******************************************************************************/
+
+MAS normative_simulation {
+   infrastructure: Centralised
+   environment: GameEnvironment("AgentGame.conf") 
+   agents:
+   		/* team "simple" */
+   		simple_;		
+  
+   		/* team "dragon" */
+   		dragon_;
+		
+		/* other agents - currently turned off */
+		// random_ #5;
+		// wait_ #1;
+		
+   aslSourcePath: "src/asl";
+}
