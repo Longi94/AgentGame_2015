@@ -37,7 +37,6 @@ init.
 	
 +time(_): init & mypos(X,Y) & mydir(D) & X = 59 & Y = 0 <-
 	+target_low(49, 10);
-	+lap;
 	if (D = 2) {
 		!move(2);
 	} else {
@@ -54,11 +53,10 @@ init.
 	
 +time(_): init & mypos(X,Y) & mydir(D) & X = 59 & Y = 59 <-
 	+target_low(49, 49);
-	+lap;
-	if (D = 3) {
-		!move(3);
+	if (D = 0) {
+		!move(0);
 	} else {
-		turn(3);
+		turn(0);
 	}.
 	
 //Start looping when reaching the nearest point of the loop
@@ -80,7 +78,7 @@ init.
 +time(_): init & mypos(X,Y) & X = 49 & Y = 49 <-
 	-target_low(_,_);
 	-init;
-	!move(3).
+	!move(0).
 
 // If we are unable to move (our last position is the same as our position now),
 // forget the target and schedule a random turn to avoid geting stucked together 
@@ -152,34 +150,39 @@ init.
 +time(_): mypos(X,Y) & mydir(D) & X = 10 & Y = 10 & D = 3 <-
 	turn(2).
 	
-+time(_): mypos(X,Y) & mydir(D) & X = 49 & Y = 10 & D = 1 <-
-	turn(2).
-	
 +time(_): mypos(X,Y) & mydir(D) & X = 10 & Y = 49 & D = 2 <-
-	turn(1).
-	
-+time(_): mypos(X,Y) & mydir(D) & X = 49 & Y = 49 & D = 2 <-
-	turn(3).
-	
-+time(_): mypos(X,Y) & mydir(D) & X = 30 & Y = 10 & D = 0 & lap<-
-	-lap;
-	turn(3).
-	
-+time(_): mypos(X,Y) & mydir(D) & X = 30 & Y = 10 & D = 0 <-
-	+lap;
 	turn(1).
 	
 +time(_): mypos(X,Y) & mydir(D) & X = 30 & Y = 49 & D = 1 <-
 	turn(0).
 	
-+time(_): mypos(X,Y) & mydir(D) & X = 30 & Y = 49 & D = 3 <-
++time(_): mypos(X,Y) & mydir(D) & X = 30 & Y = 10 & D = 0 <-
+	turn(1).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 49 & Y = 10 & D = 1 <-
+	turn(2).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 49 & Y = 49 & D = 2 <-
+	turn(3).
+
++time(_): mypos(X,Y) & mydir(D) & X = 10 & Y = 49 & D = 3 <-
 	turn(0).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 10 & Y = 30 & D = 0 <-
+	turn(1).
+
++time(_): mypos(X,Y) & mydir(D) & X = 49 & Y = 30 & D = 1 <-
+	turn(0).
+	
++time(_): mypos(X,Y) & mydir(D) & X = 49 & Y = 10 & D = 0 <-
+	turn(3).
 
 // If we see some food and we had no target before, we select the closest 
 // food and move towards it. (Note: if we would have a target, one of the 
 // plans above would fit it, thus here we are sure that we had no plans earlier.
 +time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) <-
 	+target(Fx,Fy);
+	+target_low(X,Y);
 	/*if (D = 0) {
 		if (Fy < 10) {
 			+target_low(X, 10);
