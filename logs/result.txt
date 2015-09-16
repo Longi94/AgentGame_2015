@@ -1,16 +1,16 @@
 # AgentGame 15.00 simulation results
-# Recorded at: 2015-09-15 22:05:53
+# Recorded at: 2015-09-16 14:45:28
 # Recorded on: Panther
 
 dragon
-233734
+331700
 simple
-114417
+101775
 
 Simulation finished because round limit (15000) reached.
-Total simulation time: 25 sec
+Total simulation time: 3 sec
 Execution times:
-   dragon: 627 ms
-      dragon_: 627 ms
-   simple: 983 ms
-      simple_: 983 ms
+   dragon: 1160 ms
+      dragon_: 1160 ms
+   simple: 938 ms
+      simple_: 938 ms
