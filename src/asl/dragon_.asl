@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 init.
+step_count(0).
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Being out of energy
@@ -76,10 +77,10 @@ init.
 	
 +time(_): init & mypos(59,59) & mydir(D) <-
 	-init;
-	if (D = 3) {
-		!move(3);
+	if (D = 0) {
+		!move(0);
 	} else {
-		turn(3);
+		turn(0);
 	}.
 
 // If we are unable to move (our last position is the same as our position now),
@@ -91,7 +92,9 @@ init.
 	
 
 // If we are not stucked, we just have to keep moving
-+!move(Dir)  <-
++!move(Dir): step_count(N)  <-
+	-step_count(_);
+	+step_count(N + 1);
 	step(Dir).
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,6 +119,8 @@ init.
 +time(_): target(X,Y) & mypos(X,Y) & mydir(D) & food(Food) & .min(Food,[_,_,Fx,Fy]) <-
 	-target(_,_);
 	+target(Fx,Fy);
+	-step_count(_);
+	+step_count(0);
 	!move(D).
 	
 // If we get at the target cell, but there is no food there anymore (because if 
@@ -162,7 +167,38 @@ init.
 
 +time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) <-
 	+target(Fx,Fy);
+	-step_count(_);
+	+step_count(0);
 	!move(D).
+	
+	
++time(_): mypos(10,30) & move_to_middle & mydir(1) <-
+	-move_to_middle;
+	!move(1).
+	
++time(_): mypos(30,49) & move_to_middle & mydir(0) <-
+	-move_to_middle;
+	!move(0).
+	
++time(_): mypos(30,10) & move_to_middle & mydir(2) <-
+	-move_to_middle;
+	!move(2).
+	
++time(_): mypos(49,30) & move_to_middle & mydir(3) <-
+	-move_to_middle;
+	!move(3).
+	
++time(_): mypos(10,30) & move_to_middle <-
+	turn(1).
+	
++time(_): mypos(30,49) & move_to_middle <-
+	turn(0).
+	
++time(_): mypos(30,10) & move_to_middle <-
+	turn(2).
+	
++time(_): mypos(49,30) & move_to_middle <-
+	turn(3).
 	
 //Turn when reaching these special points of the loop
 +time(_): mypos(10,10) & mydir(3) <-
@@ -178,17 +214,16 @@ init.
 	turn(0).
 	
 //Continue on the path of the loop
-
-+time(_): mypos(10,Y) & not mydir(2) & Y \== 49 <-
++time(_): mypos(10,Y) & not mydir(2) & Y < 49 <-
 	turn(2).
 
-+time(_): mypos(49,Y) & not mydir(0) & Y \== 10 <-
++time(_): mypos(49,Y) & not mydir(0) & Y > 10 <-
 	turn(0).
 
-+time(_): mypos(X,10) & not mydir(3) & X \== 10 <-
++time(_): mypos(X,10) & not mydir(3) & X > 10 <-
 	turn(3).
 
-+time(_): mypos(X,49) & not mydir(1) & X \== 49 <-
++time(_): mypos(X,49) & not mydir(1) & X < 49 <-
 	turn(1).
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -209,6 +244,30 @@ init.
 	!move(2).
 	
 +time(_): mypos(X,Y) & X > 49 <-
+	!move(3).
+	
++time(_): mypos(X,Y) & mydir(0) & Y > 0 & step_count(N) & N > 160 <-
+	+move_to_middle;
+	-step_count(_);
+	+step_count(0);
+	!move(0).
+	
++time(_): mypos(X,Y) & mydir(1) & X < 59 & step_count(N) & N > 160 <-
+	+move_to_middle;
+	-step_count(_);
+	+step_count(0);
+	!move(1).
+	
++time(_): mypos(X,Y) & mydir(2) & Y < 59 & step_count(N) & N > 160 <-
+	+move_to_middle;
+	-step_count(_);
+	+step_count(0);
+	!move(2).
+	
++time(_): mypos(X,Y) & mydir(3) & X > 0 & step_count(N) & N > 160 <-
+	+move_to_middle;
+	-step_count(_);
+	+step_count(0);
 	!move(3).
 
 // Otherwise we should just move forward...
