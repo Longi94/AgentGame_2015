@@ -146,20 +146,66 @@ step_count(0).
 		!move(0);
 	}.
 	
+
+	
+// We see another agent on the food
++time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) & mydir(D) <-
+	-step_count(_);
+	+step_count(0);
+	-target(_,_);
+	!move(D).
+
++time(_): mypos(X,Y) & Y > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_])<-
+	-step_count(_);
+	+step_count(0);
+	-target(_,_);
+	!move(0).
+	
++time(_): mypos(X,Y) & X < 10 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
+	-step_count(_);
+	+step_count(0);
+	-target(_,_);
+	!move(1).
+	
++time(_): mypos(X,Y) & Y < 10 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
+	-step_count(_);
+	+step_count(0);
+	-target(_,_);
+	!move(2).
+	
++time(_): mypos(X,Y) & X > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
+	-step_count(_);
+	+step_count(0);
+	-target(_,_);
+	!move(3).
+
 // If we have a target different from our current position, let's move towards 
 // it. (Note: if our position would be the target position, one of the plans  
 // above would have been selected earlier.)
-+time(_): target(Fx,Fy) & mypos(Mx,My) & Fx>Mx <-
++time(_): target(Fx,Fy) & mypos(Mx,My) & Fx>Mx & (mydir(0) | mydir(2)) <-
 	!move(1).
 	
-+time(_): target(Fx,Fy) & mypos(Mx,My) & Fx<Mx <-
++time(_): target(Fx,Fy) & mypos(Mx,My) & Fx<Mx & (mydir(0) | mydir(2)) <-
 	!move(3).
+	
++time(_): target(Fx,Fy) & mypos(Mx,My) & Fy>My & (mydir(0) | mydir(2)) <-
+	!move(2).	
+    
++time(_): target(Fx,Fy) & mypos(Mx,My) & Fy<My & (mydir(0) | mydir(2)) <-
+	!move(0).
+
 	
 +time(_): target(Fx,Fy) & mypos(Mx,My) & Fy>My <-
 	!move(2).	
     
 +time(_): target(Fx,Fy) & mypos(Mx,My) & Fy<My <-
 	!move(0).
+
++time(_): target(Fx,Fy) & mypos(Mx,My) & Fx>Mx <-
+	!move(1).
+	
++time(_): target(Fx,Fy) & mypos(Mx,My) & Fx<Mx <-
+	!move(3).
 	
 // If we see some food and we had no target before, we select the closest 
 // food and move towards it. (Note: if we would have a target, one of the 

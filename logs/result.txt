@@ -1,16 +1,16 @@
 # AgentGame 15.00 simulation results
-# Recorded at: 2015-09-17 09:53:54
+# Recorded at: 2015-09-17 15:10:48
 # Recorded on: Madelline
 
 simple
-127885
+108192
 dragon
-313833
+355432
 
 Simulation finished because round limit (15000) reached.
-Total simulation time: 19 sec
+Total simulation time: 10 sec
 Execution times:
-   simple: 3381 ms
-      simple_: 3381 ms
-   dragon: 7401 ms
-      dragon_: 7401 ms
+   simple: 2103 ms
+      simple_: 2103 ms
+   dragon: 6569 ms
+      dragon_: 6569 ms
