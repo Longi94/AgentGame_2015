@@ -171,53 +171,24 @@ init.
 +time(_): mypos(10,49) & mydir(2) <-
 	turn(1).
 	
-+time(_): mypos(30,49) & mydir(1) <-
-	turn(0).
-	
-+time(_): mypos(30,10) & mydir(0) <-
-	turn(1).
-	
-+time(_): mypos(49,10) & mydir(1) <-
-	turn(2).
-	
-+time(_): mypos(49,49) & mydir(2) <-
-	turn(3).
-
-+time(_): mypos(10,49) & mydir(3) <-
-	turn(0).
-	
-+time(_): mypos(10,30) & mydir(0) <-
-	turn(1).
-
-+time(_): mypos(49,30) & mydir(1) <-
-	turn(0).
-	
 +time(_): mypos(49,10) & mydir(0) <-
 	turn(3).
 	
++time(_): mypos(49,49) & mydir(1) <-
+	turn(0).
+	
 //Continue on the path of the loop
-+time(_): mypos(10,Y) & Y < 30 & not mydir(2) & not mydir(0)<-
+
++time(_): mypos(10,Y) & not mydir(2) & Y \== 49 <-
 	turn(2).
 
-+time(_): mypos(10,_) & mydir(3)<-
-	turn(0).
-	
-+time(_): mypos(49,Y) & Y > 20 & Y < 40 & not mydir(0) & not mydir(2)<-
++time(_): mypos(49,Y) & not mydir(0) & Y \== 10 <-
 	turn(0).
 
-+time(_): mypos(49,_) & mydir(1)<-
-	turn(2).
-	
-+time(_): mypos(X,10) & X > 20 & X < 40 & not mydir(1) & not mydir(3)<-
-	turn(1).
-
-+time(_): mypos(_,10) & mydir(0)<-
-	turn(3).
-	
-+time(_): mypos(X,49) & X > 30 & not mydir(3) & not mydir(1)<-
++time(_): mypos(X,10) & not mydir(3) & X \== 10 <-
 	turn(3).
 
-+time(_): mypos(_,49) & mydir(2)<-
++time(_): mypos(X,49) & not mydir(1) & X \== 49 <-
 	turn(1).
 
 ////////////////////////////////////////////////////////////////////////////////
