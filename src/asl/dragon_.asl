@@ -216,22 +216,47 @@ step_count(0).
 	-step_count(_);
 	+step_count(0);
 	!move(D).
+
+	
++time(_): mypos(10,30) & move_to_middle & mydir(1) & reverse <-
+	-move_to_middle;
+	-reverse;
+	!move(1).
+	
++time(_): mypos(30,49) & move_to_middle & mydir(0) & reverse <-
+	-move_to_middle;
+	-reverse;
+	!move(0).
+	
++time(_): mypos(30,10) & move_to_middle & mydir(2) & reverse <-
+	-move_to_middle;
+	-reverse;
+	!move(2).
+	
++time(_): mypos(49,30) & move_to_middle & mydir(3) & reverse <-
+	-move_to_middle;
+	-reverse;
+	!move(3).
 	
 	
 +time(_): mypos(10,30) & move_to_middle & mydir(1) <-
 	-move_to_middle;
+	+reverse;
 	!move(1).
 	
 +time(_): mypos(30,49) & move_to_middle & mydir(0) <-
 	-move_to_middle;
+	+reverse;
 	!move(0).
 	
 +time(_): mypos(30,10) & move_to_middle & mydir(2) <-
 	-move_to_middle;
+	+reverse;
 	!move(2).
 	
 +time(_): mypos(49,30) & move_to_middle & mydir(3) <-
 	-move_to_middle;
+	+reverse;
 	!move(3).
 	
 +time(_): mypos(10,30) & move_to_middle <-
@@ -247,29 +272,55 @@ step_count(0).
 	turn(3).
 	
 //Turn when reaching these special points of the loop
-+time(_): mypos(10,10) & mydir(3) <-
++time(_): mypos(10,10) & mydir(3) & not reverse <-
 	turn(2).
 	
-+time(_): mypos(10,49) & mydir(2) <-
++time(_): mypos(10,49) & mydir(2) & not reverse <-
 	turn(1).
 	
-+time(_): mypos(49,10) & mydir(0) <-
++time(_): mypos(49,10) & mydir(0) & not reverse <-
 	turn(3).
 	
-+time(_): mypos(49,49) & mydir(1) <-
++time(_): mypos(49,49) & mydir(1) & not reverse <-
 	turn(0).
+	
++time(_): mypos(10,10) & mydir(0) & reverse <-
+	turn(1).
+	
++time(_): mypos(10,49) & mydir(3) & reverse <-
+	turn(0).
+	
++time(_): mypos(49,10) & mydir(1) & reverse <-
+	turn(2).
+	
++time(_): mypos(49,49) & mydir(2) & reverse <-
+	turn(3).
 	
 //Continue on the path of the loop
-+time(_): mypos(10,Y) & not mydir(2) & Y < 49 <-
-	turn(2).
 
-+time(_): mypos(49,Y) & not mydir(0) & Y > 10 <-
++time(_): mypos(10,Y) & not mydir(0) & Y > 10 & reverse <-
 	turn(0).
 
-+time(_): mypos(X,10) & not mydir(3) & X > 10 <-
++time(_): mypos(49,Y) & not mydir(2) & Y < 49 & reverse <-
+	turn(2).
+
++time(_): mypos(X,10) & not mydir(1) & X < 49 & reverse <-
+	turn(1).
+
++time(_): mypos(X,49) & not mydir(3) & X > 10 & reverse <-
+	turn(3).
+	
+	
++time(_): mypos(10,Y) & not mydir(2) & Y < 49 & not reverse <-
+	turn(2).
+
++time(_): mypos(49,Y) & not mydir(0) & Y > 10 & not reverse <-
+	turn(0).
+
++time(_): mypos(X,10) & not mydir(3) & X > 10 & not reverse <-
 	turn(3).
 
-+time(_): mypos(X,49) & not mydir(1) & X < 49 <-
++time(_): mypos(X,49) & not mydir(1) & X < 49 & not reverse <-
 	turn(1).
 
 ////////////////////////////////////////////////////////////////////////////////
