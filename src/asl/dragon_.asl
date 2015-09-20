@@ -65,7 +65,7 @@ step_count(0).
 		turn(2);
 	}.
 	
-+time(_): init & mypos(49,0) & mydir(D) <-
++time(_): init & mypos(59,0) & mydir(D) <-
 	-init;
 	if (D = 2) {
 		!move(2);
