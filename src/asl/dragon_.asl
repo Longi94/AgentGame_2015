@@ -31,8 +31,14 @@ step_count(0).
 	-spin(_);
 	!move(D).
 
++time(_): spin(0) & original_dir(Do) & mydir(D) & Do \== D <-
+	-original_dir(_);
+	-spin(_);
+	turn(Do).
+	
 //The last spin
 +time(_) : spin(0) & mydir(D) <-
+	-original_dir(_);
 	-spin(_);
 	!move(D).
 
@@ -109,7 +115,11 @@ step_count(0).
 //    - the food objects (=lists) are ordered by their first element (=distance)
 //    - the  "[0,..." means that the distance of the closest food is zero
 // If yes, let's eat it and forget about it as a target! 
-+time(_): food(Food) & .min(Food,[0,V,X,Y]) <-
++time(_): food(Food) & .min(Food,[0,V,X,Y]) & mydir(D) & original_dir(_)<-
+	!eat_at_my_pos.
+	
++time(_): food(Food) & .min(Food,[0,V,X,Y]) & mydir(D) <-
+	+original_dir(D);
 	!eat_at_my_pos.
 	
 // If we get at the target cell, but there is no food there anymore (because if 
@@ -152,30 +162,35 @@ step_count(0).
 +time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) & mydir(D) <-
 	-step_count(_);
 	+step_count(0);
+	-move_to_middle;
 	-target(_,_);
 	!move(D).
 
 +time(_): mypos(X,Y) & Y > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_])<-
 	-step_count(_);
 	+step_count(0);
+	-move_to_middle;
 	-target(_,_);
 	!move(0).
 	
 +time(_): mypos(X,Y) & X < 10 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
 	-step_count(_);
 	+step_count(0);
+	-move_to_middle;
 	-target(_,_);
 	!move(1).
 	
 +time(_): mypos(X,Y) & Y < 10 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
 	-step_count(_);
 	+step_count(0);
+	-move_to_middle;
 	-target(_,_);
 	!move(2).
 	
 +time(_): mypos(X,Y) & X > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
 	-step_count(_);
 	+step_count(0);
+	-move_to_middle;
 	-target(_,_);
 	!move(3).
 
@@ -214,6 +229,7 @@ step_count(0).
 +time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) <-
 	+target(Fx,Fy);
 	-step_count(_);
+	-move_to_middle;
 	+step_count(0);
 	!move(D).
 
