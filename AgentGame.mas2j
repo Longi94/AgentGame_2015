@@ -15,7 +15,8 @@ MAS normative_simulation {
    		simple_;		
   
    		/* team "dragon" */
-   		dragon_;
+   		dragon_1;
+   		dragon_2;
 		
 		/* other agents - currently turned off */
 		// random_ #5;

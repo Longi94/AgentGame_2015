@@ -99,8 +99,6 @@ step_count(0).
 
 // If we are not stucked, we just have to keep moving
 +!move(Dir): step_count(N)  <-
-	-step_count(_);
-	+step_count(N + 1);
 	step(Dir).
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,8 +127,6 @@ step_count(0).
 +time(_): target(X,Y) & mypos(X,Y) & mydir(D) & food(Food) & .min(Food,[_,_,Fx,Fy]) <-
 	-target(_,_);
 	+target(Fx,Fy);
-	-step_count(_);
-	+step_count(0);
 	!move(D).
 	
 // If we get at the target cell, but there is no food there anymore (because if 
@@ -151,46 +147,39 @@ step_count(0).
 +time(_): avoid(D) & .random(R) <-
     -avoid(_);
 	if (D = 0 | D = 2) {
-		!move(1);
+		if (R > 0.5) {
+			!move(1)
+		} else {
+			!move(3);
+		}
 	} else {
-		!move(0);
+		if (R > 0.5) {
+			!move(0)
+		} else {
+			!move(2);
+		}
 	}.
 	
 
 	
 // We see another agent on the food
 +time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) & mydir(D) <-
-	-step_count(_);
-	+step_count(0);
-	-move_to_middle;
 	-target(_,_);
 	!move(D).
 
-+time(_): mypos(X,Y) & Y > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_])<-
-	-step_count(_);
-	+step_count(0);
-	-move_to_middle;
++time(_): mypos(X,Y) & Y > 19 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_])<-
 	-target(_,_);
 	!move(0).
 	
 +time(_): mypos(X,Y) & X < 10 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
-	-step_count(_);
-	+step_count(0);
-	-move_to_middle;
 	-target(_,_);
 	!move(1).
 	
 +time(_): mypos(X,Y) & Y < 10 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
-	-step_count(_);
-	+step_count(0);
-	-move_to_middle;
 	-target(_,_);
 	!move(2).
 	
 +time(_): mypos(X,Y) & X > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
-	-step_count(_);
-	+step_count(0);
-	-move_to_middle;
 	-target(_,_);
 	!move(3).
 
@@ -228,115 +217,34 @@ step_count(0).
 
 +time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) <-
 	+target(Fx,Fy);
-	-step_count(_);
-	-move_to_middle;
-	+step_count(0);
 	!move(D).
 
 	
-+time(_): mypos(10,30) & move_to_middle & mydir(1) & reverse <-
-	-move_to_middle;
-	-reverse;
-	!move(1).
-	
-+time(_): mypos(30,49) & move_to_middle & mydir(0) & reverse <-
-	-move_to_middle;
-	-reverse;
-	!move(0).
-	
-+time(_): mypos(30,10) & move_to_middle & mydir(2) & reverse <-
-	-move_to_middle;
-	-reverse;
-	!move(2).
-	
-+time(_): mypos(49,30) & move_to_middle & mydir(3) & reverse <-
-	-move_to_middle;
-	-reverse;
-	!move(3).
-	
-	
-+time(_): mypos(10,30) & move_to_middle & mydir(1) <-
-	-move_to_middle;
-	+reverse;
-	!move(1).
-	
-+time(_): mypos(30,49) & move_to_middle & mydir(0) <-
-	-move_to_middle;
-	+reverse;
-	!move(0).
-	
-+time(_): mypos(30,10) & move_to_middle & mydir(2) <-
-	-move_to_middle;
-	+reverse;
-	!move(2).
-	
-+time(_): mypos(49,30) & move_to_middle & mydir(3) <-
-	-move_to_middle;
-	+reverse;
-	!move(3).
-	
-+time(_): mypos(10,30) & move_to_middle <-
-	turn(1).
-	
-+time(_): mypos(30,49) & move_to_middle <-
-	turn(0).
-	
-+time(_): mypos(30,10) & move_to_middle <-
-	turn(2).
-	
-+time(_): mypos(49,30) & move_to_middle <-
-	turn(3).
-	
 //Turn when reaching these special points of the loop
-+time(_): mypos(10,10) & mydir(3) & not reverse <-
++time(_): mypos(10,10) & mydir(3) <-
 	turn(2).
 	
-+time(_): mypos(10,49) & mydir(2) & not reverse <-
++time(_): mypos(10,19) & mydir(2) <-
 	turn(1).
 	
-+time(_): mypos(49,10) & mydir(0) & not reverse <-
++time(_): mypos(49,10) & mydir(0) <-
 	turn(3).
 	
-+time(_): mypos(49,49) & mydir(1) & not reverse <-
++time(_): mypos(49,19) & mydir(1) <-
 	turn(0).
-	
-+time(_): mypos(10,10) & mydir(0) & reverse <-
-	turn(1).
-	
-+time(_): mypos(10,49) & mydir(3) & reverse <-
-	turn(0).
-	
-+time(_): mypos(49,10) & mydir(1) & reverse <-
-	turn(2).
-	
-+time(_): mypos(49,49) & mydir(2) & reverse <-
-	turn(3).
+
 	
 //Continue on the path of the loop
-
-+time(_): mypos(10,Y) & not mydir(0) & Y > 10 & reverse <-
-	turn(0).
-
-+time(_): mypos(49,Y) & not mydir(2) & Y < 49 & reverse <-
++time(_): mypos(10,Y) & not mydir(2) & Y < 19 <-
 	turn(2).
 
-+time(_): mypos(X,10) & not mydir(1) & X < 49 & reverse <-
-	turn(1).
-
-+time(_): mypos(X,49) & not mydir(3) & X > 10 & reverse <-
-	turn(3).
-	
-	
-+time(_): mypos(10,Y) & not mydir(2) & Y < 49 & not reverse <-
-	turn(2).
-
-+time(_): mypos(49,Y) & not mydir(0) & Y > 10 & not reverse <-
++time(_): mypos(49,Y) & not mydir(0) & Y > 10 <-
 	turn(0).
 
-+time(_): mypos(X,10) & not mydir(3) & X > 10 & not reverse <-
++time(_): mypos(X,10) & not mydir(3) & X > 10 <-
 	turn(3).
 
-+time(_): mypos(X,49) & not mydir(1) & X < 49 & not reverse <-
++time(_): mypos(X,19) & not mydir(1) & X < 49 <-
 	turn(1).
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -347,7 +255,7 @@ step_count(0).
 // see any food right now.
 
 //Move back to the inner circle
-+time(_): mypos(X,Y) & Y > 49<-
++time(_): mypos(X,Y) & Y > 19<-
 	!move(0).
 	
 +time(_): mypos(X,Y) & X < 10 <-
@@ -357,30 +265,6 @@ step_count(0).
 	!move(2).
 	
 +time(_): mypos(X,Y) & X > 49 <-
-	!move(3).
-	
-+time(_): mypos(X,Y) & mydir(0) & Y > 0 & step_count(N) & N > 160 <-
-	+move_to_middle;
-	-step_count(_);
-	+step_count(0);
-	!move(0).
-	
-+time(_): mypos(X,Y) & mydir(1) & X < 59 & step_count(N) & N > 160 <-
-	+move_to_middle;
-	-step_count(_);
-	+step_count(0);
-	!move(1).
-	
-+time(_): mypos(X,Y) & mydir(2) & Y < 59 & step_count(N) & N > 160 <-
-	+move_to_middle;
-	-step_count(_);
-	+step_count(0);
-	!move(2).
-	
-+time(_): mypos(X,Y) & mydir(3) & X > 0 & step_count(N) & N > 160 <-
-	+move_to_middle;
-	-step_count(_);
-	+step_count(0);
 	!move(3).
 
 // Otherwise we should just move forward...
