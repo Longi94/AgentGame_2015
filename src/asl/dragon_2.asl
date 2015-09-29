@@ -137,7 +137,7 @@ step_count(0).
 // there would be a food, the plan above would have been executed) let's sadly  
 // forget about our target. Start spinning to see if there is any food around
 // us.
-+time(_): target(X,Y) & mypos(X,Y) & mydir(D) & teammates(Mates) <-
++time(_): target(X,Y) & mypos(X,Y) & mydir(D) <-
 	-target(_,_);
 	+spin(3);
 	.send(dragon_1, tell, spin(4));
@@ -146,6 +146,7 @@ step_count(0).
 	} else {
 		turn(D+1);
 	}.
+	
 // Agent thinks it needs to avoid a obstacle. Strafe to avoid the obstacle and
 // avoid being stuck forever.
 +time(_): avoid(D) & .random(R) <-
