@@ -27,23 +27,27 @@ step_count(0).
 
 //We are currently spinning, but we see food. Stop spinning and target the food.
 +time(_) : spin(_) & food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) <-
+	-target(_,_);
 	+target(Fx,Fy);
 	-spin(_);
+	.send(dragon_2, untell, spin(4));
 	!move(D).
 
-+time(_): spin(0) & original_dir(Do) & mydir(D) & Do \== D <-
++time(_): spin(0) & original_dir(Do) & mydir(D) & Do \== D & not target(_,_) <-
 	-original_dir(_);
 	-spin(_);
+	.send(dragon_2, untell, spin(4));
 	turn(Do).
 	
 //The last spin
-+time(_) : spin(0) & mydir(D) <-
++time(_) : spin(0) & mydir(D) & not target(_,_) <-
 	-original_dir(_);
 	-spin(_);
+	.send(dragon_2, untell, spin(4));
 	!move(D).
 
 //We are currently spinning.
-+time(_) : spin(N) & mydir(D) <-
++time(_) : spin(N) & mydir(D) & not target(_,_) <-
 	-spin(_);
 	+spin(N - 1);
 	if(D == 3) {
@@ -136,6 +140,7 @@ step_count(0).
 +time(_): target(X,Y) & mypos(X,Y) & mydir(D) <-
 	-target(_,_);
 	+spin(3);
+	.send(dragon_2, tell, spin(4));
 	if(D == 3) {
 		turn(0);
 	} else {
@@ -167,7 +172,7 @@ step_count(0).
 	-target(_,_);
 	!move(D).
 
-+time(_): mypos(X,Y) & Y > 19 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_])<-
++time(_): mypos(X,Y) & Y > 21 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_])<-
 	-target(_,_);
 	!move(0).
 	
@@ -216,6 +221,7 @@ step_count(0).
 // plans above would fit it, thus here we are sure that we had no plans earlier.
 
 +time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) <-
+	-target(_,_);
 	+target(Fx,Fy);
 	!move(D).
 
@@ -224,18 +230,18 @@ step_count(0).
 +time(_): mypos(10,10) & mydir(3) <-
 	turn(2).
 	
-+time(_): mypos(10,19) & mydir(2) <-
++time(_): mypos(10,21) & mydir(2) <-
 	turn(1).
 	
 +time(_): mypos(49,10) & mydir(0) <-
 	turn(3).
 	
-+time(_): mypos(49,19) & mydir(1) <-
++time(_): mypos(49,21) & mydir(1) <-
 	turn(0).
 
 	
 //Continue on the path of the loop
-+time(_): mypos(10,Y) & not mydir(2) & Y < 19 <-
++time(_): mypos(10,Y) & not mydir(2) & Y < 21 <-
 	turn(2).
 
 +time(_): mypos(49,Y) & not mydir(0) & Y > 10 <-
@@ -244,7 +250,7 @@ step_count(0).
 +time(_): mypos(X,10) & not mydir(3) & X > 10 <-
 	turn(3).
 
-+time(_): mypos(X,19) & not mydir(1) & X < 49 <-
++time(_): mypos(X,21) & not mydir(1) & X < 49 <-
 	turn(1).
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -255,7 +261,7 @@ step_count(0).
 // see any food right now.
 
 //Move back to the inner circle
-+time(_): mypos(X,Y) & Y > 19<-
++time(_): mypos(X,Y) & Y > 21<-
 	!move(0).
 	
 +time(_): mypos(X,Y) & X < 10 <-

@@ -27,23 +27,27 @@ step_count(0).
 
 //We are currently spinning, but we see food. Stop spinning and target the food.
 +time(_) : spin(_) & food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) <-
+	-target(_,_);
 	+target(Fx,Fy);
 	-spin(_);
+	.send(dragon_1, untell, spin(4));
 	!move(D).
 
-+time(_): spin(0) & original_dir(Do) & mydir(D) & Do \== D <-
++time(_): spin(0) & original_dir(Do) & mydir(D) & Do \== D & not target(_,_) <-
 	-original_dir(_);
 	-spin(_);
+	.send(dragon_1, untell, spin(4));
 	turn(Do).
 	
 //The last spin
-+time(_) : spin(0) & mydir(D) <-
++time(_) : spin(0) & mydir(D) & not target(_,_) <-
 	-original_dir(_);
 	-spin(_);
+	.send(dragon_1, untell, spin(4));
 	!move(D).
 
 //We are currently spinning.
-+time(_) : spin(N) & mydir(D) <-
++time(_) : spin(N) & mydir(D) & not target(_,_) <-
 	-spin(_);
 	+spin(N - 1);
 	if(D == 3) {
@@ -133,15 +137,15 @@ step_count(0).
 // there would be a food, the plan above would have been executed) let's sadly  
 // forget about our target. Start spinning to see if there is any food around
 // us.
-+time(_): target(X,Y) & mypos(X,Y) & mydir(D) <-
++time(_): target(X,Y) & mypos(X,Y) & mydir(D) & teammates(Mates) <-
 	-target(_,_);
 	+spin(3);
+	.send(dragon_1, tell, spin(4));
 	if(D == 3) {
 		turn(0);
 	} else {
 		turn(D+1);
 	}.
-
 // Agent thinks it needs to avoid a obstacle. Strafe to avoid the obstacle and
 // avoid being stuck forever.
 +time(_): avoid(D) & .random(R) <-
@@ -216,12 +220,13 @@ step_count(0).
 // plans above would fit it, thus here we are sure that we had no plans earlier.
 
 +time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) <-
+	-target(_,_);
 	+target(Fx,Fy);
 	!move(D).
 
 	
 //Turn when reaching these special points of the loop
-+time(_): mypos(10,40) & mydir(3) <-
++time(_): mypos(10,38) & mydir(3) <-
 	turn(2).
 	
 +time(_): mypos(10,49) & mydir(2) <-
@@ -230,7 +235,7 @@ step_count(0).
 +time(_): mypos(49,49) & mydir(1) <-
 	turn(0).
 	
-+time(_): mypos(49,40) & mydir(0) <-
++time(_): mypos(49,38) & mydir(0) <-
 	turn(3).
 
 	
@@ -238,10 +243,10 @@ step_count(0).
 +time(_): mypos(10,Y) & not mydir(2) & Y < 49 <-
 	turn(2).
 
-+time(_): mypos(49,Y) & not mydir(0) & Y > 40 <-
++time(_): mypos(49,Y) & not mydir(0) & Y > 38 <-
 	turn(0).
 
-+time(_): mypos(X,40) & not mydir(3) & X > 10 <-
++time(_): mypos(X,38) & not mydir(3) & X > 10 <-
 	turn(3).
 
 +time(_): mypos(X,49) & not mydir(1) & X < 49 <-
@@ -261,7 +266,7 @@ step_count(0).
 +time(_): mypos(X,Y) & X < 10 <-
 	!move(1).
 	
-+time(_): mypos(X,Y) & Y < 40 <-
++time(_): mypos(X,Y) & Y < 38 <-
 	!move(2).
 	
 +time(_): mypos(X,Y) & X > 49 <-
