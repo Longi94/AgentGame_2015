@@ -26,29 +26,30 @@ step_count(0).
 ////////////////////////////////////////////////////////////////////////////////
 
 //We are currently spinning, but we see food. Stop spinning and target the food.
-+time(_) : spin(_) & food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) <-
++time(_) : spin(_) & food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & not target(_,_) <-
 	-target(_,_);
 	+target(Fx,Fy);
 	-spin(_);
-	.send(dragon_1, untell, spin(4));
+	-spin(_)[source(dragon_1)];
 	!move(D).
 
 +time(_): spin(0) & original_dir(Do) & mydir(D) & Do \== D & not target(_,_) <-
 	-original_dir(_);
 	-spin(_);
-	.send(dragon_1, untell, spin(4));
+	-spin(_)[source(dragon_1)];
 	turn(Do).
 	
 //The last spin
 +time(_) : spin(0) & mydir(D) & not target(_,_) <-
 	-original_dir(_);
 	-spin(_);
-	.send(dragon_1, untell, spin(4));
+	-spin(_)[source(dragon_1)];
 	!move(D).
 
 //We are currently spinning.
 +time(_) : spin(N) & mydir(D) & not target(_,_) <-
 	-spin(_);
+	-spin(_)[source(dragon_1)];
 	+spin(N - 1);
 	if(D == 3) {
 		turn(0);
@@ -168,23 +169,23 @@ step_count(0).
 
 	
 // We see another agent on the food
-+time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) & mydir(D) <-
++time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) & mydir(D) & target(_,_) <-
 	-target(_,_);
 	!move(D).
 
-+time(_): mypos(X,Y) & Y > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_])<-
++time(_): mypos(X,Y) & Y > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_])  & target(_,_) <-
 	-target(_,_);
 	!move(0).
 	
-+time(_): mypos(X,Y) & X < 10 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
++time(_): mypos(X,Y) & X < 10 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) & target(_,_) <-
 	-target(_,_);
 	!move(1).
 	
-+time(_): mypos(X,Y) & Y < 40 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
++time(_): mypos(X,Y) & Y < 40 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) & target(_,_) <-
 	-target(_,_);
 	!move(2).
 	
-+time(_): mypos(X,Y) & X > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) <-
++time(_): mypos(X,Y) & X > 49 & food(Food) & .min(Food,[_,_,Fx,Fy]) & agent(Agent) & .min(Agent,[_,_,_,_,Fx,Fy,_]) & target(_,_) <-
 	-target(_,_);
 	!move(3).
 
@@ -220,7 +221,13 @@ step_count(0).
 // food and move towards it. (Note: if we would have a target, one of the 
 // plans above would fit it, thus here we are sure that we had no plans earlier.
 
-+time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) <-
++time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) 
+		& agent(Agent) & .min(Agent,[_,_,_,_,Ax,Ay,_]) & (Ax \== Fx & Ay \== Fy) <-
+	-target(_,_);
+	+target(Fx,Fy);
+	!move(D).
+
++time(_): food(Food) & .min(Food,[_,_,Fx,Fy]) & mydir(D) & mypos(X, Y) & agent([]) <-
 	-target(_,_);
 	+target(Fx,Fy);
 	!move(D).
